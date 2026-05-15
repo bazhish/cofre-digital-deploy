@@ -1,0 +1,30 @@
+name: Cofre Digital - Verificacao de Seguranca 
+ 
+on: 
+  push: 
+    branches: [ main, develop ] 
+ 
+jobs: 
+  security-check: 
+    name: Verificacao de Seguranca 
+    runs-on: ubuntu-latest 
+ 
+    steps: 
+      - name: Baixar codigo 
+        uses: actions/checkout@v4 
+ 
+      - name: Verificar possiveis secrets no codigo 
+        run: | 
+          echo "Verificando se existem senhas expostas..." 
+ 
+          if grep -r "password.*=" app/ --exclude-dir=.git; then 
+            echo "ATENCAO: possivel senha encontrada no codigo!" 
+            exit 1 
+          fi 
+ 
+          if grep -r "api.*key.*=" app/ --exclude-dir=.git; then 
+            echo "ATENCAO: possivel API key encontrada no codigo!" 
+            exit 1 
+          fi 
+ 
+          echo "Nenhum secret exposto encontrado!"
